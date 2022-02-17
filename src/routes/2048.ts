@@ -10,13 +10,11 @@ router.get("/records", async (req: Request, res: Response, next: NextFunction) =
     const ret = {};
     for (const record of data) {
       const { record1, record2, record3, size } = record;
-      // ret[size] ={ record1, record2, record3 };
       Object.defineProperty(ret, size, {
         value: { record1, record2, record3 },
         enumerable: true,
       });
     }
-    log.info(ret);
     res.json(ret);
     await Mongoose.connection.close();
   } catch (error) {

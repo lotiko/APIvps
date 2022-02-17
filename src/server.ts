@@ -2,20 +2,24 @@ import express, { Request, Response, NextFunction } from "express";
 import dotenv from "dotenv";
 import log from "./logger";
 import connect from "./db/conn";
-import routes from "./routes";
+import r_2048 from "./routes/2048";
+import cors from 'cors';
 
 dotenv.config();
 const port = process.env.SERVER_PORT;
+const mongoUri = String(process.env.DB_URI_MONGO);
 const app = express();
-
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-
-app.listen(port, () => {
-  log.info(`API listen on port: ${port}.`);
-  connect();
-  routes(app);
-});
+app.use(cors({
+  origin: ['http://localhost:3000', 'https://localhost:3000']
+}));
+connect(mongoUri);
+app
+  .use(express.json())
+  .use(express.urlencoded({ extended: false }))
+  .use("/API/2048", r_2048)
+  .listen(port, () => {
+    log.info(`API listen on port: ${port}.`);
+  });
 
 // define a route handler for the default home page
 // app.get("/", (req, res) => {

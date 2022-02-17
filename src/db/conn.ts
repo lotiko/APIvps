@@ -1,18 +1,19 @@
-import mongoose from "mongoose";
+import Mongoose from "mongoose";
 import log from "../logger";
-import dotenv from "dotenv";
 
-dotenv.config();
+export default (db: string) => {
+  const connect = () => {
+    Mongoose
+      .connect(db)
+      .then(() => {
+        return log.info(`Successfully connected to Database`);
+      })
+      .catch((error) => {
+        log.error(error);
+        return process.exit(1);
+      });
+  };
+  connect();
 
-async function connect() {
-  const mongoUri = process.env.DB_URI_MONGO as string;
-  try {
-        await mongoose
-            .connect(mongoUri);
-        log.info("Mongodb database connected");
-    } catch (error) {
-        log.error("DB error", error.toString());
-    }
-}
-
-export default connect;
+  Mongoose.connection.on("disconnected", connect);
+};

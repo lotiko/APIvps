@@ -6,11 +6,12 @@
   "scripts": {
     "clean": "rimraf dist/*",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "tslint -c tslint.json -p tsconfig.json --fix",
+    "lint": "eslint -c .eslintrc.js --ext .ts . --fix",
     "tsc": "tsc",
     "build": "npm-run-all clean lint tsc",
     "dev:start": "npm-run-all build start",
     "dev": "nodemon --watch src -e ts --exec npm run dev:start",
+    "devlocal": "nodemon ./src/server.ts",
     "start": "node ."
   },
   "repository": {
@@ -24,17 +25,24 @@
   },
   "homepage": "https://github.com/lotiko/APIvps#readme",
   "devDependencies": {
+    "@types/cors": "^2.8.12",
     "@types/dotenv": "^8.2.0",
     "@types/express": "^4.17.13",
+    "@types/mongoose": "^5.11.97",
     "@types/node": "^16.11.25",
+    "@typescript-eslint/eslint-plugin": "^5.12.0",
+    "@typescript-eslint/parser": "^5.12.0",
+    "eslint": "^8.9.0",
+    "eslint-plugin-jsdoc": "^37.9.1",
+    "eslint-plugin-prefer-arrow": "^1.2.3",
     "nodemon": "^2.0.15",
     "npm-run-all": "^4.1.5",
     "rimraf": "^3.0.2",
     "ts-node": "^10.5.0",
-    "tslint": "^6.1.3",
     "typescript": "^4.5.5"
   },
   "dependencies": {
+    "cors": "^2.8.5",
     "dayjs": "^1.10.7",
     "dotenv": "^16.0.0",
     "express": "^4.17.2",

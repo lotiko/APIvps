@@ -4,30 +4,77 @@ import log from "../logger";
 import Records, { IRecords, IRecord } from "../db/models/records";
 const router = express.Router();
 
-router.get("/records", async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const data = await Records.find({});
-    const ret = {};
-    for (const record of data) {
-      const { record1, record2, record3, size } = record;
-      Object.defineProperty(ret, size, {
-        value: { record1, record2, record3 },
-        enumerable: true,
-      });
+router
+  .get("/records", async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const data = await Records.find({});
+      const ret = {};
+      for (const record of data) {
+        const { record1, record2, record3, size } = record;
+        Object.defineProperty(ret, size, {
+          value: { record1, record2, record3 },
+          enumerable: true,
+        });
+      }
+      res.json(ret);
+      await Mongoose.connection.close();
+    } catch (error) {
+      log.error("API 2048 records =>");
+      log.info(error);
+      await Mongoose.connection.close();
+      return;
     }
-    res.json(ret);
-    await Mongoose.connection.close();
-  } catch (error) {
-    log.error("API 2048 records =>");
-    log.info(error);
-    await Mongoose.connection.close();
     return;
-  }
-  return;
-});
+  })
+  .post("/", async (req: Request, res: Response, next: NextFunction) => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const { size, name, score }: { size: string; name: string; score: number } = req.body;
+    try {
+      const doc: IRecords = await Records.findOne({ size });
+      // const dataDb: IRecords = doc._doc;
+      const {
+        record1,
+        record2,
+        record3,
+      }: { record1: IRecord; record2: IRecord; record3: IRecord } = doc;
+      const tabScores: number[] = [record1.score, record2.score, record3.score];
+      let idxIsEgal = -1;
+      if (
+        tabScores.some((record, idx) => {
+          if (record === score) {
+            idxIsEgal = idx;
+            return true;
+          }
+          return false;
+        })
+      ) {
+        const key = `record${idxIsEgal + 1}`;
+        const recordToUpdate = doc[key] as IRecord;
+        recordToUpdate.name.push(name);
+        const ret = await Records.updateOne(
+          { _id: doc.id },
+          { [key]: recordToUpdate },
+          { new: true }
+        );
+        res.json(ret);
+      } else {
+        const tabRecords: IRecord[] = [record1, record2, {name:[name], score}].sort((a,b) => b.score -a.score);
+        const ret = await Records.updateOne(
+          { _id: doc.id },
+          { record1: tabRecords[0], record2: tabRecords[1], record3: tabRecords[2] },
+          { new: true }
+        );
+        res.json(ret);
+      }
+    } catch (error) {
+      log.error(error);
+      const ret: object = { result: false };
+      res.status(400).json(ret);
+    }
+  });
 //   const db = client.db(dbName);
 //   db.collection("records")
-//     .find({})
+//     .find({})recor
 //     .toArray()
 //     .then(async (docs) => {
 //       if (docs.length === 0) {

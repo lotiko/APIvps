@@ -2,10 +2,12 @@ import { Schema, model } from "mongoose";
 
 // 1. Create an interface representing a document in MongoDB.
 export interface IRecord {
-  name: [string];
+  [key: string]: string[] | number;
+  name: string[];
   score: number;
 }
 export interface IRecords {
+  [key: string]: string | IRecord;
   size: string;
   record1: IRecord;
   record2: IRecord;

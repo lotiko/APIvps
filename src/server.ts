@@ -11,7 +11,7 @@ const port = process.env.SERVER_PORT;
 const mongoUri = String(process.env.DB_URI_MONGO);
 const app = express();
 app.use(cors({
-  origin: ['http://localhost:3000', 'https://localhost:3000']
+  origin: ['http://localhost:3000', 'https://localhost:3000', "*"]
 }));
 connect(mongoUri);
 app

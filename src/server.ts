@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import log from "./logger";
 import connect from "./db/conn";
 import r_2048 from "./routes/2048";
+import r_linkedin from "./routes/linkedin";
 import cors from 'cors';
 
 dotenv.config();
@@ -17,6 +18,7 @@ app
   .use(express.json())
   .use(express.urlencoded({ extended: false }))
   .use("/API/2048", r_2048)
+  .use("/API/linkedin", r_linkedin)
   .listen(port, () => {
     log.info(`API listen on port: ${port}.`);
   });

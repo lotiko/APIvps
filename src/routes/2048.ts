@@ -18,13 +18,13 @@ router
       }
       res.json(ret);
       await Mongoose.connection.close();
+      next();
     } catch (error) {
       log.error("API 2048 records =>");
       log.info(error);
       await Mongoose.connection.close();
       return;
     }
-    return;
   })
   .post("/", async (req: Request, res: Response, next: NextFunction) => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -66,6 +66,7 @@ router
         );
         res.json(ret);
       }
+      next();
     } catch (error) {
       log.error(error);
       const ret: object = { result: false };

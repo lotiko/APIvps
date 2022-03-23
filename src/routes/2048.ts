@@ -6,9 +6,9 @@ const router = express.Router();
 
 router
   .get("/records", async (req: Request, res: Response, next: NextFunction) => {
-    log.info("IN RECORDS");
     try {
       const data = await Records.find({});
+      log.info("IN RECORDS",data);
       const ret = {};
       for (const record of data) {
         const { record1, record2, record3, size } = record;
